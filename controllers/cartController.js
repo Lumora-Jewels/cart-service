@@ -1,9 +1,14 @@
 const Cart = require("../models/Cart");
+const Product = require("../models/Product");
 
 // Get cart by user ID
 exports.getCart = async (req, res) => {
   try {
-    const cart = await Cart.findOne({ userId: req.params.userId });
+    const cart = await Cart.findOne({ userId: req.params.userId }).populate({
+      path: 'items.productId',
+      model: 'Product',
+      select: 'name images SKU stock price'
+    });
     if (!cart) return res.status(404).json({ error: "Cart not found" });
     res.json(cart);
   } catch (err) {
